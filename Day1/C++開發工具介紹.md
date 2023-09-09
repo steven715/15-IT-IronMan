@@ -103,6 +103,8 @@ docker run -v D:/dvt:/home --name=cpp_dev --tty cpp_dev
 
 在上面透過dockerfile建好開發環境後，就能利用vs code套件的remote explorer連到開發環境上面了。
 
+![remote explorer](./remote-explorer.JPG)
+
 ## CMake
 
 CMake是一個跨平台的編譯輔助軟體，一般用C++的編譯器`g++`，會需要很長的指令來編譯，但透過CMake提供的語法，能用參數化的形式簡化指令。
@@ -128,9 +130,21 @@ add_executable(${PROJECT_NAME} ${SRC}) # 建置執行檔
 
 ```file
 - 專案根目錄
-    - build
-    - src
+    - build/
+    - src/
     - CMakeLists.txt
+```
+
+`smain.cpp`
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "hello it iron man \n";
+    return 0;
+}
 ```
 
 依照上面目錄架構，再用剛剛的範本建立一個用CMake編譯的執行檔，相關指令如下
