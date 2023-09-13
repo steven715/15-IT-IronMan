@@ -3,22 +3,20 @@ project(cmaketest)                  # 專案名稱
 
 set(CMAKE_CXX_FLAGS "-std=c++14") 
 
-set(ServerSRC
-    server.cpp
+include_directories(./ajson)
+
+set(SRC
+    smain.cpp
 )
 
-set(ClientSRC
-    client.cpp
+set(SRC_ajson
+ajson_demo.cpp
 )
 
-find_package(websocketpp CONFIG REQUIRED)
+find_package(jsoncpp CONFIG REQUIRED)
 
-add_executable(server ${ServerSRC})
-add_executable(client ${ClientSRC})
+add_executable(jsoncpp_demo ${SRC})
 
-set(LIB
-    pthread
-)
+target_link_libraries(jsoncpp_demo PRIVATE JsonCpp::JsonCpp)
 
-target_link_libraries(server PRIVATE websocketpp::websocketpp ${LIB})
-target_link_libraries(client PRIVATE websocketpp::websocketpp ${LIB})
+add_executable(ajson_demo ${SRC_ajson})
