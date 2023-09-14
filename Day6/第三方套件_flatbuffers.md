@@ -95,7 +95,7 @@ add_executable(${PROJECT_NAME} ${SRC})
 target_link_libraries(${PROJECT_NAME} PRIVATE flatbuffers::flatbuffers)
 ```
 
-一切就緒後，就來到編譯並看結果的部分，Example中我有加上讓序列化的資料存成檔案，之後有機會再來展示透過網路傳輸的部分。
+一切就緒後，就來到編譯並看結果的部分，Example中我有加上讓序列化的資料存成檔案，之後有機會再來展示透過網路傳輸的部分，以上的代碼都可以從我的[github](https://github.com/steven715/15-IT-IronMan/tree/master)取得唷。
 
 ```shell
 cd build
