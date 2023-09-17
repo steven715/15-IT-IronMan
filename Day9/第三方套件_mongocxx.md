@@ -4,7 +4,7 @@
 
 ## 環境
 
-環境因安裝`mongodb`會需要額外依賴，所以有補上了相關依賴，可以[這邊]()找到，也需要建一個`mongodb`的容器
+環境因安裝`mongodb`會需要額外依賴，所以有補上了相關依賴，可以[這邊](https://github.com/steven715/15-IT-IronMan/blob/master/Day9/Dockerfile)找到，也需要建一個`mongodb`的容器
 
 ```shell
 docker run -itd --name mongo -p 27017:27017 mongo
