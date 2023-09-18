@@ -1,70 +1,63 @@
-#include <websocketpp/config/asio_no_tls_client.hpp>
-#include <websocketpp/client.hpp>
-
+#include <websocketpp/config/asio_no_tls.hpp>
+#include <websocketpp/server.hpp>
 #include <iostream>
 
-typedef websocketpp::client<websocketpp::config::asio_client> client;
+typedef websocketpp::server<websocketpp::config::asio> server;
 
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
 using websocketpp::lib::bind;
 
 // pull out the type of messages sent by our config
-typedef websocketpp::config::asio_client::message_type::ptr message_ptr;
+typedef server::message_ptr message_ptr;
 
-// This message handler will be invoked once for each incoming message. It
-// prints the message and then sends a copy of the message back to the server.
-void on_message(client* c, websocketpp::connection_hdl hdl, message_ptr msg) {
+// Define a callback to handle incoming messages
+void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
     std::cout << "on_message called with hdl: " << hdl.lock().get()
               << " and message: " << msg->get_payload()
               << std::endl;
 
-
-    websocketpp::lib::error_code ec;
-
-    c->send(hdl, msg->get_payload(), msg->get_opcode(), ec);
-    if (ec) {
-        std::cout << "Echo failed because: " << ec.message() << std::endl;
-    }
-}
-
-int main(int argc, char* argv[]) {
-    // Create a client endpoint
-    client c;
-
-    std::string uri = "ws://localhost:9002";
-
-    if (argc == 2) {
-        uri = argv[1];
+    // check for a special command to instruct the server to stop listening so
+    // it can be cleanly exited.
+    if (msg->get_payload() == "stop-listening") {
+        s->stop_listening();
+        return;
     }
 
     try {
-        // Set logging to be pretty verbose (everything except message payloads)
-        c.set_access_channels(websocketpp::log::alevel::all);
-        c.clear_access_channels(websocketpp::log::alevel::frame_payload);
+        s->send(hdl, msg->get_payload(), msg->get_opcode());
+    } catch (websocketpp::exception const & e) {
+        std::cout << "Echo failed because: "
+                  << "(" << e.what() << ")" << std::endl;
+    }
+}
 
-        // Initialize ASIO
-        c.init_asio();
+int main() {
+    // Create a server endpoint
+    server echo_server;
+
+    try {
+        // Set logging settings
+        echo_server.set_access_channels(websocketpp::log::alevel::all);
+        echo_server.clear_access_channels(websocketpp::log::alevel::frame_payload);
+
+        // Initialize Asio
+        echo_server.init_asio();
 
         // Register our message handler
-        c.set_message_handler(bind(&on_message,&c,::_1,::_2));
+        echo_server.set_message_handler(bind(&on_message,&echo_server,::_1,::_2));
 
-        websocketpp::lib::error_code ec;
-        client::connection_ptr con = c.get_connection(uri, ec);
-        if (ec) {
-            std::cout << "could not create connection because: " << ec.message() << std::endl;
-            return 0;
-        }
+        // Listen on port 9002
+        echo_server.listen(9002);
 
-        // Note that connect here only requests a connection. No network messages are
-        // exchanged until the event loop starts running in the next line.
-        c.connect(con);
+        // Start the server accept loop
+        echo_server.start_accept();
 
         // Start the ASIO io_service run loop
-        // this will cause a single connection to be made to the server. c.run()
-        // will exit when this connection is closed.
-        c.run();
+        echo_server.run();
     } catch (websocketpp::exception const & e) {
         std::cout << e.what() << std::endl;
+    } catch (...) {
+        std::cout << "other exception" << std::endl;
     }
 }

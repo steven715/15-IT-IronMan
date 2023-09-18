@@ -7,18 +7,12 @@ set(ServerSRC
     server.cpp
 )
 
-set(ClientSRC
-    client.cpp
-)
-
 find_package(websocketpp CONFIG REQUIRED)
 
 add_executable(server ${ServerSRC})
-add_executable(client ${ClientSRC})
 
 set(LIB
     pthread
 )
 
 target_link_libraries(server PRIVATE websocketpp::websocketpp ${LIB})
-target_link_libraries(client PRIVATE websocketpp::websocketpp ${LIB})
