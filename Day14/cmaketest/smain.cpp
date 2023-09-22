@@ -1,12 +1,3 @@
-# 輔助函式 crash log
-
-今天來分享C++ 怎麼做程式crash的stack trace
-
-## 捕捉 crash
-
-這次只介紹`linux`系列的crash log，之後再補`windows`的，兩邊做法不太一樣；另外在`crash`示範的部分，先用`空指針`這種錯誤來示範
-
-```cpp
 #include <stdio.h>
 #include <signal.h>
 #include <time.h>
@@ -60,30 +51,30 @@ void sig_crash(int sig)
         GetTimeString(szTime);
 #ifdef __linux
         void* pStacks[MAX_STACK_FRAMES];
-  size_t nStackDepth;      
-  char **SymbolAry;
+		size_t nStackDepth;      
+		char **SymbolAry;
 
-  nStackDepth = (int)backtrace(pStacks, MAX_STACK_FRAMES);
+		nStackDepth = (int)backtrace(pStacks, MAX_STACK_FRAMES);
 
-  SymbolAry = backtrace_symbols(pStacks, nStackDepth);
-  if (SymbolAry == NULL)
-  {
-   snprintf(szTmp, sizeof(szTmp), "no backtrace_symbols\n", szTime);
-   fwrite(szTmp, strlen(szTmp), 1, fd);
-  }
-  else
-  {
-   for (int j = 0; j < nStackDepth; j++)
-   {
-    if (SymbolAry[j])
-    {
-     snprintf(szTmp, sizeof(szTmp), "%s\n", SymbolAry[j]);
-     fwrite(szTmp, strlen(szTmp), 1, fd);
-    }
-   }
+		SymbolAry = backtrace_symbols(pStacks, nStackDepth);
+		if (SymbolAry == NULL)
+		{
+			snprintf(szTmp, sizeof(szTmp), "no backtrace_symbols\n", szTime);
+			fwrite(szTmp, strlen(szTmp), 1, fd);
+		}
+		else
+		{
+			for (int j = 0; j < nStackDepth; j++)
+			{
+				if (SymbolAry[j])
+				{
+					snprintf(szTmp, sizeof(szTmp), "%s\n", SymbolAry[j]);
+					fwrite(szTmp, strlen(szTmp), 1, fd);
+				}
+			}
 
-   free(SymbolAry);
-     }
+			free(SymbolAry);
+	    }
 #endif // __linux
     }
     catch (...)
@@ -107,8 +98,3 @@ int main()
     
     return 0;
 }
-```
-
-## 參考
-
-[C++ 捕捉 crash 信号（win&Linux](https://blog.csdn.net/aixiaodeshushu/article/details/111084142)
