@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <memory>
 
 using namespace std;
@@ -15,6 +16,11 @@ public:
     }
     string Name = "";
     int TailLen = 0;
+
+    Cat(Cat&& tmp)
+    {
+
+    }
 };
 
 int main(int argc, char const *argv[])
@@ -65,6 +71,21 @@ int main(int argc, char const *argv[])
     {
         cout << "wp was not expired\n";
     }
+
+    int tmp = 5;
+    // C++ 右值引用是&&，可以指向右值，不可指向左值
+    int &&ref_tmp = move(tmp); // move將左值轉成右值
+
+    cout << tmp << endl;
+    cout << ref_tmp << endl;
+
+    vector<string> vec;
+    string text1 = "abc";
+
+    vec.push_back(text1);  // 一般用法，會拷貝資料
+    vec.push_back(move(text1));  // 透過move，可以避免拷貝，但str1就會變空字串
+
+    cout << "text1: " << text1 << endl;
 
     return 0;
 }
