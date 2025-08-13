@@ -1,14 +1,3 @@
-# 併發相關 Thread pool
-
-線程池就是我們預先建立一定數量的線程，並且讓這些線程去執行那些可以併發執行的工作(金融系統中為每個用戶計算其帳戶的即時風險率)，以提供系統的併發性。
-
-整體邏輯就是線程池掌握一組線程，以及一個任務隊列(task queue)，因為線程池會負責將由外部接收到的工作放到這個任務隊列中，同時線程池中的線程就會不斷地消化這個任務隊列上的元素。
-
-## 實作
-
-線程池的實作中，有幾個點可以注意一下，若使用工作線程使用 `while(true)` 這種忙等待的作法，其實會比較消耗CPU性能，可以透過 `condition_variable` 去等到有任務近來再做消化，性能會有很好的提升，另外任務隊列需要是線程安全 (`thread safe`)，不然可能會出現未定義行為，而針對這個任務隊列也可以透過 `lock-free` 的方式來提供，在下一篇文章中，就會使用 `lock-free` 實作的 queue 來測試線程池的性能。
-
-```cpp
 #include <thread>
 #include <vector>
 #include <queue>
@@ -210,9 +199,3 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
-
-```
-
-## 參考
-
-[C++ 併發處理實戰](https://www.tenlong.com.tw/products/9786263240032?list_name=srh)

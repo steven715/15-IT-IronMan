@@ -1,18 +1,3 @@
-# 併發相關 semaphore
-
-信號量 (Semaphore) 可以允許一個設置量，表示為同一時間最多可以有設置量的數量線程去訪問某共享資源，會有下面幾條原則組成。
-
-1. 一個線程想要訪問某共享資源，前提為信號量必須大於0，當成功訪問的時間，信號量減一，代表正在訪問。
-2. 若當前信號量小於0，表示無法取得訊號量，線程會進入等待，等到信號量大於0，就會進行第一條。
-3. 每當線程使用共享資源，必須釋放信號量，也就是將信號量加一。
-
-另外，C++直到C++20才支援`semaphore`的功能，所以在C++20以前的情況下，我們用`mutex`以及`condition_variable`來實作`semaphore`的功能。
-
-## 實作代碼
-
-下面透過將 `Semaphore sem(4)` 數量4改成1或2，來實現具體信號量控制同一時間能運行的線程數量。
-
-```cpp
 #include <mutex>
 #include <condition_variable>
 #include <thread>
@@ -91,8 +76,3 @@ int main(int argc, char const *argv[])
     }
     return 0;
 }
-```
-
-## 參考資料
-
-[C++多線程 - semaphore](https://zhuanlan.zhihu.com/p/512969481)
